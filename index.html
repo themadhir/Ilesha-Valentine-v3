@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Will you be my Valentine?</title>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Screenshot -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --bg1: #ffd6e7;
+      --bg2: #ffeef6;
+      --card: #ffffffcc;
+      --yes: #ff3b7a;
+      --yesHover: #ff1f68;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      font-family: system-ui, sans-serif;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .card {
+      width: min(720px, 92vw);
+      padding: 26px 22px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(0,0,0,.15);
+    }
+
+    h1 {
+      font-size: clamp(26px, 4vw, 44px);
+      margin: 12px 0 18px;
+    }
+
+    .button-zone {
+      position: relative;
+      width: min(520px, 92%);
+      height: 150px;
+      margin: 0 auto;
+      touch-action: none;
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 16px 24px;
+      font-size: 18px;
+      font-weight: 800;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,.14);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #yesBtn {
+      left: 18%;
+      background: var(--yes);
+      color: #fff;
+    }
+
+    #noBtn {
+      left: 62%;
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      animation: pop .35s ease;
+    }
+
+    .action-btn {
+      position: relative;
+      margin-top: 14px;
+      padding: 12px 22px;
+      font-size: 16px;
+      border-radius: 999px;
+      border: none;
+      background: #111827;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* MOVE NEXT BUTTON DOWN (~5cm) */
+    #nextBtn {
+      margin-top: 190px;
+    }
+
+    @keyframes pop {
+      from { transform: scale(.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Background music -->
+  <audio id="bgMusic" loop>
+    <source src="love.mp3" type="audio/mpeg">
+  </audio>
+
+  <main class="card" id="captureArea">
+    <h1>Ilesha will you be my valentine?</h1>
+
+    <section class="button-zone" id="zone">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </section>
+
+    <section class="result" id="result">
+      <h2>YAY! 🎉</h2>
+      <img
+        src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
+        width="280"
+        alt="Fireworks"
+      />
+
+      <br>
+      <button class="action-btn" id="shotBtn">📸 Save this moment</button>
+      <br>
+      <button class="action-btn" id="nextBtn">Next ➡️</button>
+    </section>
+  </main>
+
+  <script>
+    const zone = document.getElementById("zone");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const result = document.getElementById("result");
+    const music = document.getElementById("bgMusic");
+    const shotBtn = document.getElementById("shotBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const confettiInstance = confetti.create(confettiCanvas, { resize: true });
+
+    function fireConfetti() {
+      confettiInstance({
+        particleCount: 300,
+        spread: 140,
+        origin: { y: 0.6 }
+      });
+    }
+
+    zone.addEventListener("pointermove", () => {
+      noBtn.style.left = Math.random() * 70 + "%";
+    });
+
+    yesBtn.addEventListener("click", async () => {
+      zone.style.display = "none";
+      result.style.display = "block";
+      fireConfetti();
+      try { await music.play(); } catch {}
+    });
+
+    shotBtn.addEventListener("click", () => {
+      html2canvas(document.getElementById("captureArea")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "valentine-moment.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.location.href = "next.html";
+    });
+  </script>
+</body>
+</html>
